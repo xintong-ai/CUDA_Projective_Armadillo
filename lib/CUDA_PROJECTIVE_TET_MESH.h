@@ -200,7 +200,21 @@ __global__ void Update_Kernel(float* X, float* V, const float *fixed, const floa
 	V[i*3+1]*=damping;
 	V[i*3+2]*=damping;
 	//Apply gravity
-	V[i*3+1]+=GRAVITY*t;
+	float lens[3] = { 0, 0 , 0};
+	float lensForce[3] = {0,0,0};
+	float dist2 = pow(X[i * 3 + 0] - lens[0], 2) + pow(X[i * 3 + 2] - lens[2], 2);
+	if (dist2 < 0.3){
+		for (int j = 0; j < 3; j++) {
+			lensForce[j] = X[i * 3 + j] - lens[j];
+		}
+		lensForce[1] = 0;
+		float nn = sqrt(lensForce[0] * lensForce[0] + lensForce[1] * lensForce[1] + lensForce[2] * lensForce[2]);
+		for (int j = 0; j < 3; j++) {
+			V[i * 3 + j] += (100 * lensForce[j] / (nn ) * t);
+		}
+	} 
+
+	//	V[i*3+1]+=GRAVITY*t;
 	//Position update
 	X[i*3+0]+=V[i*3+0]*t;
 	X[i*3+1]+=V[i*3+1]*t;

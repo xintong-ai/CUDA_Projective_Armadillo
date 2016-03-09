@@ -24,7 +24,7 @@ set(SHARED_LIBRARIES
 set( Srcs kernel.cu
 	)
 set( Hdrs 
-OPENGL_DRIVER.h ARMADILLO.h
+OPENGL_DRIVER.h ARMADILLO.h GridMesh.h
     )
 #set( Rcs resources/vechist.qrc)
 
