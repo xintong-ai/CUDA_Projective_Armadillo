@@ -30,7 +30,8 @@
 #define __OPENGL_DRIVER_H__
 #include "../lib/MY_GLSL.h"
 #include "../lib/BMP_IO.h"
-#include "ARMADILLO.h"
+//#include "ARMADILLO.h"
+#include "GridMesh.h"
 
 #define NO_MOTION			0
 #define ZOOM_MOTION			1
@@ -48,7 +49,7 @@ bool	idle_render=false;
 int		file_id=0;
 float	time_step=1/30.0;
 
-ARMADILLO<float>		armadillo;
+GridMesh<float>		armadillo;
 int		select_v=-1;
 float	target[3]={0, 0, 0};
 

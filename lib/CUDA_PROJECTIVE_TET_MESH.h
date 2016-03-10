@@ -202,7 +202,7 @@ __global__ void Update_Kernel(float* X, float* V, const float *fixed, const floa
 	//Apply gravity
 	float lens[3] = { 0, 0 , 0};
 	float lensForce[3] = {0,0,0};
-	float dist2 = pow(X[i * 3 + 0] - lens[0], 2) + pow(X[i * 3 + 2] - lens[2], 2);
+	float dist2 = sqrt(pow(X[i * 3 + 0] - lens[0], 2) + pow(X[i * 3 + 2] - lens[2], 2));
 	if (dist2 < 0.3){
 		for (int j = 0; j < 3; j++) {
 			lensForce[j] = X[i * 3 + j] - lens[j];
@@ -214,7 +214,7 @@ __global__ void Update_Kernel(float* X, float* V, const float *fixed, const floa
 		}
 	} 
 
-	//	V[i*3+1]+=GRAVITY*t;
+	//V[i*3+1]+=GRAVITY*t;
 	//Position update
 	X[i*3+0]+=V[i*3+0]*t;
 	X[i*3+1]+=V[i*3+1]*t;
