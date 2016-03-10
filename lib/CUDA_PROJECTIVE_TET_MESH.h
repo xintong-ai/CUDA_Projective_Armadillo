@@ -30,6 +30,10 @@
 #define __WHMIN_CUDA_PROJECTIVE_TET_MESH_H__
 #include "TET_MESH.h"
 #include "TIMER.h"
+#include "vector_types.h"
+#include "vector_functions.h"
+#include "helper_math.h"
+#include "helper_cuda.h"
 
 #define GRAVITY			-9.8
 #define RADIUS_SQUARED	0.002//0.01
@@ -200,17 +204,17 @@ __global__ void Update_Kernel(float* X, float* V, const float *fixed, const floa
 	V[i*3+1]*=damping;
 	V[i*3+2]*=damping;
 	//Apply gravity
-	float lens[3] = { 0, 0 , 0};
-	float lensForce[3] = {0,0,0};
-	float dist2 = sqrt(pow(X[i * 3 + 0] - lens[0], 2) + pow(X[i * 3 + 2] - lens[2], 2));
-	if (dist2 < 0.3){
+	float3 lens= make_float3( 0, 0 , 0);
+	float3 vert = make_float3(X[i * 3], X[i * 3 + 1], X[i * 3 + 2]);
+	float3 lensForce;// = { 0, 0, 0 };
+//	float dist = sqrt(pow(X[i * 3 + 0] - lens[0], 2) + pow(X[i * 3 + 2] - lens[2], 2));
+	float dist = length(vert - lens);
+	float radius = 0.4;
+	if (dist < radius){
+		float3 dir = normalize(vert - lens);// make_float3(lens[0] - X[i * 3], lens[1] - X[i * 3 + 1], 0);
+		lensForce = dir * (radius - dist);
 		for (int j = 0; j < 3; j++) {
-			lensForce[j] = X[i * 3 + j] - lens[j];
-		}
-		lensForce[1] = 0;
-		float nn = sqrt(lensForce[0] * lensForce[0] + lensForce[1] * lensForce[1] + lensForce[2] * lensForce[2]);
-		for (int j = 0; j < 3; j++) {
-			V[i * 3 + j] += (100 * lensForce[j] / (nn ) * t);
+			V[i * 3 + j] += (100 * (&(lensForce.x))[j]* t);
 		}
 	} 
 
